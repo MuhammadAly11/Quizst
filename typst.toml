@@ -1,0 +1,12 @@
+[package]
+name = "typ-McQs"
+version = "0.0.1"
+entrypoint = "lib.typ"
+authors = ["Muhammad Aly"]
+license = "MIT"
+description = "Typst template for McQs quizes and exams"
+
+[template]
+path = "template"
+entrypoint = "main.typ"
+thumbnail = "template/thumbnail.png"
