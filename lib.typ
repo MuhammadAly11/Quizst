@@ -4,7 +4,7 @@
   authors: (),
   json_data: (),
   paper-size: "a4",
-  highlight-answer: "No",
+  highlight-answer: false,
   body
 ) = {
   set document(title: title, author: authors.map(author => author.name))
@@ -43,37 +43,37 @@
     )
   }
 
-  set text(16pt, weight: 500)
+  // Questions section
+  set text(20pt, weight: 500)
+  v(2em)
+  
+  for mcq in json_data [
+    + #mcq.question:
+      #set enum(numbering: "a)")
+      #set text(17pt, weight: 500)
+      #for opt in ("a", "b", "c", "d", "e", "f", "g") [
+        #if highlight-answer == true and opt == mcq.answer [
+          #highlight[
+            + #mcq.at(opt)
+          ]
+        ] else if opt in mcq and mcq.at(opt) != "" [
+          + #mcq.at(opt)
+        ]
+      ]
+  ]
 
-  for mcq in json_data { 
-    [== #mcq.sn. #mcq.question: ] 
-      for opt in ("a", "b", "c", "d", "e", "f", "g") { 
-        if opt in mcq and mcq.at(opt) != "" { 
-          [=== #opt) #mcq.at(opt)] 
-        } 
-      } 
-  } 
+  // Answers section
+  v(3em)
+  align(center, text(24pt, smallcaps("Answers")))
+  v(1em)
 
-
-  v(20pt, weak: true)
-  align(center, text(24pt, smallcaps("The Answer")))
-  v(8.35mm, weak: true)
-
-  set par (spacing: 0.65em)
-  set par(
-    justify: true,
+  grid(
+    align: center,
+    columns: (1fr, 1fr, 1fr, 1fr),
+    gutter: 1em,
+    ..json_data.map(mcq => [#mcq.sn. #mcq.answer])
   )
 
-  // todo: display a table of correct answers
-  // grid(
-  //   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-  //   align: center,
-  //   gutter: 1em,
-  //   for mcq in json_data { 
-  //     ..mcq.enumerate(start: 1).map(((idx, mcq)) => [ #mcq.sn #mcq.answer ])
-  //   }
-  //   )
-
-  // Display the paper's contents.
+  // add body
   body
 }
