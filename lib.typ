@@ -1,13 +1,22 @@
 // This function gets your whole document as its `body` and formats
 #let quiz(
-  title: "Title",
+  title: none,
   authors: (),
   json_data: (),
   paper-size: "a4",
   highlight-answer: false,
   body
 ) = {
-  set document(title: title, author: authors.map(author => author.name))
+  // Determine document title based on quiz type
+  let doc_title = if json_data.type == "lesson" {
+    json_data.module + " - " + json_data.subject
+  } else if title != none {
+    title
+  } else {
+    json_data.title + (if "module" in json_data { " - " + json_data.module } else { "" })
+  }
+
+  set document(title: doc_title, author: authors.map(author => author.name))
 
   set page(
     paper: paper-size,
@@ -15,15 +24,32 @@
     margin: (x: 21.5pt, top: 30.51pt, bottom: 30.51pt)
   )
 
-
   show link: it => [
     #set text(12pt, weight: 500, style: "italic", blue)
     #emph(underline(it))
   ]
 
-  // title
+  // Header based on quiz type
   v(3pt, weak: true)
-  align(center, text(24pt, smallcaps(title)))
+  if json_data.type == "lesson" {
+    align(center)[
+      #text(24pt, smallcaps(json_data.module))
+      #v(2mm)
+      #text(18pt, json_data.subject + " - " + json_data.lesson)
+    ]
+  } else {
+    align(center)[
+      #text(24pt, smallcaps(json_data.title))
+      #if "module" in json_data {
+        v(2mm)
+        text(18pt, json_data.module)
+      }
+      #if "tags" in json_data and json_data.tags.len() > 0 {
+        v(2mm)
+        text(14pt, json_data.tags.join(", "))
+      }
+    ]
+  }
   v(5.35mm, weak: true)
 
   // Display the authors list.
@@ -47,7 +73,7 @@
   set text(20pt, weight: 500)
   v(2em)
   
-  for mcq in json_data [
+  for mcq in json_data.questions [
     + #mcq.question:
       #set enum(numbering: "a)")
       #set text(17pt, weight: 500)
@@ -71,7 +97,7 @@
     align: center,
     columns: (1fr, 1fr, 1fr, 1fr),
     gutter: 1em,
-    ..json_data.map(mcq => [#mcq.sn. #mcq.answer])
+    ..json_data.questions.map(mcq => [#mcq.sn. #mcq.answer])
   )
 
   // add body
