@@ -75,15 +75,15 @@
   
   for mcq in json_data.questions [
     + #mcq.question:
-      #set enum(numbering: "a)")
       #set text(17pt, weight: 500)
-      #for opt in ("a", "b", "c", "d", "e", "f", "g") [
-        #if highlight-answer == true and opt == mcq.answer [
-          #highlight[
-            + #mcq.at(opt)
+      #block(spacing: 0.65em, inset: (left: 1.5em))[
+        #for opt in ("a", "b", "c", "d", "e", "f", "g") [
+          #if highlight-answer == true and opt == mcq.answer [
+            #highlight[#opt) #mcq.at(opt)]
+          ] else if opt in mcq and mcq.at(opt) != "" [
+            #opt) #mcq.at(opt)
           ]
-        ] else if opt in mcq and mcq.at(opt) != "" [
-          + #mcq.at(opt)
+          #if opt in mcq and mcq.at(opt) != "" [ #linebreak() ]
         ]
       ]
   ]
