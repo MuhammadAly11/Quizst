@@ -4,5 +4,5 @@
 
 #show: quiz.with(
   highlight-answer: true,
-  json_data: json_data,
+  json-data: json_data,
 ) 
